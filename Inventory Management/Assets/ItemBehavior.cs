@@ -26,9 +26,17 @@ public class ItemBehavior : MonoBehaviour
 
     private void Update()
     {
-        if( _objectClicked || IsOverlapping())
+        if (_objectClicked || IsOverlapping(LayerMask.GetMask("Default")))
         {
             MoveObject();
+        }
+        if (IsOverlapping(LayerMask.GetMask("Grid")))
+        {
+            Debug.Log("I'm in a good spot");
+        }
+        else
+        {
+            Debug.Log("I'm not in a good spot");
         }
     }
 
@@ -39,16 +47,15 @@ public class ItemBehavior : MonoBehaviour
         float snappedWorldPosY = Mathf.Round(worldPos.y);
         Vector3 snappedWorldPos = new Vector3(snappedWorldPosX, snappedWorldPosY, 0);
         transform.position = snappedWorldPos;
-        Debug.Log("Pos: " + transform.position);
     }
 
-    private bool IsOverlapping()
+    private bool IsOverlapping(LayerMask layers)
     {
         ContactFilter2D filter = new();
-        filter.SetLayerMask(LayerMask.GetMask("Default"));
+        filter.SetLayerMask(layers);
         List<Collider2D> overlappedColliders = new();
-        int numOverlaps = _collider.OverlapCollider(filter, overlappedColliders);
-        Debug.Log("Num overlapping objs" + numOverlaps);
+        int numOverlaps = Physics2D.OverlapCollider(_collider,filter, overlappedColliders);
+        Debug.Log("Num overlapping objs " + numOverlaps);
         return (numOverlaps > 0);
     }
 }
